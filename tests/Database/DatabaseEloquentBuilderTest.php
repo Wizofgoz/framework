@@ -628,6 +628,22 @@ class DatabaseEloquentBuilderTest extends TestCase
         $this->assertEquals(['bar', 9000], $query->getBindings());
     }
 
+    public function testRealQueryHigherOrderOrWhereScopes()
+    {
+        $model = new EloquentBuilderTestHigherOrderWhereScopeStub;
+        $this->mockConnectionForModel($model, 'SQLite');
+        $query = $model->newQuery()->one()->orWhere->two();
+        $this->assertEquals('select * from "table" where "one" = ? or ("two" = ?)', $query->toSql());
+    }
+
+    public function testRealQueryChainedHigherOrderOrWhereScopes()
+    {
+        $model = new EloquentBuilderTestHigherOrderWhereScopeStub;
+        $this->mockConnectionForModel($model, 'SQLite');
+        $query = $model->newQuery()->one()->orWhere->two()->orWhere->three();
+        $this->assertEquals('select * from "table" where "one" = ? or ("two" = ?) or ("three" = ?)', $query->toSql());
+    }
+
     public function testSimpleWhere()
     {
         $builder = $this->getBuilder();
@@ -1105,6 +1121,26 @@ class EloquentBuilderTestScopeStub extends Model
     }
 }
 
+class EloquentBuilderTestHigherOrderWhereScopeStub extends Model
+{
+    protected $table = 'table';
+
+    public function scopeOne($query)
+    {
+        $query->where('one', 'foo');
+    }
+
+    public function scopeTwo($query)
+    {
+        $query->where('two', 'bar');
+    }
+
+    public function scopeThree($query)
+    {
+        $query->where('three', 'baz');
+    }
+}
+
 class EloquentBuilderTestNestedStub extends Model
 {
     protected $table = 'table';
@@ -1188,27 +1224,27 @@ class EloquentBuilderTestModelSelfRelatedStub extends Model
 
     public function parentFoo()
     {
-        return $this->belongsTo(EloquentBuilderTestModelSelfRelatedStub::class, 'parent_id', 'id', 'parent');
+        return $this->belongsTo(self::class, 'parent_id', 'id', 'parent');
     }
 
     public function childFoo()
     {
-        return $this->hasOne(EloquentBuilderTestModelSelfRelatedStub::class, 'parent_id', 'id');
+        return $this->hasOne(self::class, 'parent_id', 'id');
     }
 
     public function childFoos()
     {
-        return $this->hasMany(EloquentBuilderTestModelSelfRelatedStub::class, 'parent_id', 'id', 'children');
+        return $this->hasMany(self::class, 'parent_id', 'id', 'children');
     }
 
     public function parentBars()
     {
-        return $this->belongsToMany(EloquentBuilderTestModelSelfRelatedStub::class, 'self_pivot', 'child_id', 'parent_id', 'parent_bars');
+        return $this->belongsToMany(self::class, 'self_pivot', 'child_id', 'parent_id', 'parent_bars');
     }
 
     public function childBars()
     {
-        return $this->belongsToMany(EloquentBuilderTestModelSelfRelatedStub::class, 'self_pivot', 'parent_id', 'child_id', 'child_bars');
+        return $this->belongsToMany(self::class, 'self_pivot', 'parent_id', 'child_id', 'child_bars');
     }
 
     public function bazes()

@@ -185,6 +185,37 @@ class RoutingRouteTest extends TestCase
         $this->assertEquals('caught', $router->dispatch(Request::create('foo/bar', 'GET'))->getContent());
     }
 
+    public function testMiddlewareWorksIfControllerThrowsHttpResponseException()
+    {
+        // Before calling controller
+        $router = $this->getRouter();
+        $middleware = function ($request, $next) {
+            return 'caught';
+        };
+        $router->get('foo/bar', ['middleware' => $middleware, function () {
+            throw new HttpResponseException(new Response('hello'));
+        }]);
+        $response = $router->dispatch(Request::create('foo/bar', 'GET'))->getContent();
+        $this->assertEquals('caught', $response);
+
+        // After calling controller
+        $router = $this->getRouter();
+
+        $response = new Response('hello');
+
+        $middleware = function ($request, $next) use ($response) {
+            $this->assertSame($response, $next($request));
+
+            return new Response($response->getContent().' caught');
+        };
+        $router->get('foo/bar', ['middleware' => $middleware, function () use ($response) {
+            throw new HttpResponseException($response);
+        }]);
+
+        $response = $router->dispatch(Request::create('foo/bar', 'GET'))->getContent();
+        $this->assertEquals('hello caught', $response);
+    }
+
     public function testDefinedClosureMiddleware()
     {
         $router = $this->getRouter();
@@ -1059,6 +1090,29 @@ class RoutingRouteTest extends TestCase
         $routes = $routes->getRoutes();
         $routes[0]->prefix('prefix');
         $this->assertEquals('prefix', $routes[0]->uri());
+    }
+
+    public function testRoutePreservingOriginalParametersState()
+    {
+        $phpunit = $this;
+        $router = $this->getRouter();
+        $router->bind('bar', function ($value) {
+            return strlen($value);
+        });
+        $router->get('foo/{bar}', [
+            'middleware' => SubstituteBindings::class,
+            'uses' => function ($bar) use ($router, $phpunit) {
+                $route = $router->getCurrentRoute();
+
+                $phpunit->assertEquals('taylor', $route->originalParameter('bar'));
+                $phpunit->assertEquals('default', $route->originalParameter('unexisting', 'default'));
+                $phpunit->assertEquals(['bar' => 'taylor'], $route->originalParameters());
+
+                return $bar;
+            },
+        ]);
+
+        $this->assertEquals(6, $router->dispatch(Request::create('foo/taylor', 'GET'))->getContent());
     }
 
     public function testMergingControllerUses()

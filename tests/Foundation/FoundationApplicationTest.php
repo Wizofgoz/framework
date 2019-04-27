@@ -209,6 +209,32 @@ class FoundationApplicationTest extends TestCase
         $this->assertArrayHasKey(0, $app['events']->getListeners('bootstrapping: Illuminate\Foundation\Bootstrap\RegisterFacades'));
     }
 
+    public function testTerminationTests()
+    {
+        $app = new Application;
+
+        $result = [];
+        $callback1 = function () use (&$result) {
+            $result[] = 1;
+        };
+
+        $callback2 = function () use (&$result) {
+            $result[] = 2;
+        };
+
+        $callback3 = function () use (&$result) {
+            $result[] = 3;
+        };
+
+        $app->terminating($callback1);
+        $app->terminating($callback2);
+        $app->terminating($callback3);
+
+        $app->terminate();
+
+        $this->assertEquals([1, 2, 3], $result);
+    }
+
     public function testAfterBootstrappingAddsClosure()
     {
         $app = new Application;
@@ -217,6 +243,61 @@ class FoundationApplicationTest extends TestCase
         };
         $app->afterBootstrapping(RegisterFacades::class, $closure);
         $this->assertArrayHasKey(0, $app['events']->getListeners('bootstrapped: Illuminate\Foundation\Bootstrap\RegisterFacades'));
+    }
+
+    public function testBootingCallbacks()
+    {
+        $application = new Application;
+
+        $counter = 0;
+        $closure = function ($app) use (&$counter, $application) {
+            $counter++;
+            $this->assertSame($application, $app);
+        };
+
+        $closure2 = function ($app) use (&$counter, $application) {
+            $counter++;
+            $this->assertSame($application, $app);
+        };
+
+        $application->booting($closure);
+        $application->booting($closure2);
+
+        $application->boot();
+
+        $this->assertEquals(2, $counter);
+    }
+
+    public function testBootedCallbacks()
+    {
+        $application = new Application;
+
+        $counter = 0;
+        $closure = function ($app) use (&$counter, $application) {
+            $counter++;
+            $this->assertSame($application, $app);
+        };
+
+        $closure2 = function ($app) use (&$counter, $application) {
+            $counter++;
+            $this->assertSame($application, $app);
+        };
+
+        $closure3 = function ($app) use (&$counter, $application) {
+            $counter++;
+            $this->assertSame($application, $app);
+        };
+
+        $application->booting($closure);
+        $application->booted($closure);
+        $application->booted($closure2);
+        $application->boot();
+
+        $this->assertEquals(3, $counter);
+
+        $application->booted($closure3);
+
+        $this->assertEquals(4, $counter);
     }
 }
 

@@ -1325,6 +1325,37 @@ class DatabaseEloquentModelTest extends TestCase
         EloquentModelStub::flushEventListeners();
     }
 
+    public function testWithoutEventDispatcher()
+    {
+        EloquentModelSaveStub::setEventDispatcher($events = m::mock(Dispatcher::class));
+        $events->shouldReceive('listen')->once()->with('eloquent.creating: Illuminate\Tests\Database\EloquentModelSaveStub', EloquentTestObserverStub::class.'@creating');
+        $events->shouldReceive('listen')->once()->with('eloquent.saved: Illuminate\Tests\Database\EloquentModelSaveStub', EloquentTestObserverStub::class.'@saved');
+        $events->shouldNotReceive('until');
+        $events->shouldNotReceive('dispatch');
+        $events->shouldReceive('forget');
+        EloquentModelSaveStub::observe(EloquentTestObserverStub::class);
+
+        $model = EloquentModelSaveStub::withoutEvents(function () {
+            $model = new EloquentModelSaveStub;
+            $model->save();
+
+            return $model;
+        });
+
+        $model->withoutEvents(function () use ($model) {
+            $model->first_name = 'Taylor';
+            $model->save();
+        });
+
+        $events->shouldReceive('until')->once()->with('eloquent.saving: Illuminate\Tests\Database\EloquentModelSaveStub', $model);
+        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: Illuminate\Tests\Database\EloquentModelSaveStub', $model);
+
+        $model->last_name = 'Otwell';
+        $model->save();
+
+        EloquentModelSaveStub::flushEventListeners();
+    }
+
     public function testSetObservableEvents()
     {
         $class = new EloquentModelStub;
@@ -1446,13 +1477,13 @@ class DatabaseEloquentModelTest extends TestCase
 
     public function testIncrementOnExistingModelCallsQueryAndSetsAttribute()
     {
-        $model = m::mock(EloquentModelStub::class.'[newModelQuery]');
+        $model = m::mock(EloquentModelStub::class.'[newQueryWithoutRelationships]');
         $model->exists = true;
         $model->id = 1;
         $model->syncOriginalAttribute('id');
         $model->foo = 2;
 
-        $model->shouldReceive('newModelQuery')->andReturn($query = m::mock(stdClass::class));
+        $model->shouldReceive('newQueryWithoutRelationships')->andReturn($query = m::mock(stdClass::class));
         $query->shouldReceive('where')->andReturn($query);
         $query->shouldReceive('increment');
 
@@ -1976,7 +2007,13 @@ class EloquentModelSaveStub extends Model
 
     public function save(array $options = [])
     {
+        if ($this->fireModelEvent('saving') === false) {
+            return false;
+        }
+
         $_SERVER['__eloquent.saved'] = true;
+
+        $this->fireModelEvent('saved', false);
     }
 
     public function setIncrementing($value)

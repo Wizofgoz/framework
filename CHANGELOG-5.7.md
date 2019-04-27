@@ -1,17 +1,137 @@
 # Release Notes for 5.7.x
 
-## [Unreleased](https://github.com/laravel/framework/compare/v5.7.19...5.7)
+## [Unreleased](https://github.com/laravel/framework/compare/v5.7.28...5.7)
+
+
+## [v5.7.28 (2019-02-26)](https://github.com/laravel/framework/compare/v5.7.27...v5.7.28)
+
+### Added
+- Add support for `Pheanstalk 4.x` ([#27622](https://github.com/laravel/framework/pull/27622))
+- Allow configuration of token guard keys ([#27585](https://github.com/laravel/framework/pull/27585))
+
+### Changed
+- Update vue preset to exclude `@babel/preset-react` ([#27645](https://github.com/laravel/framework/pull/27645))
+- Reflash the session for the broadcasting auth call ([#27647](https://github.com/laravel/framework/pull/27647))
+- Improving readability in `AuthenticateWithBasicAuth` Middleware ([#27661](https://github.com/laravel/framework/pull/27661))
+- Use safe container getter on `Pipeline` ([#27648](https://github.com/laravel/framework/pull/27648))
+
+### Fixed
+- Fixed Postgres grammar when using union queries ([#27589](https://github.com/laravel/framework/pull/27589))
+- Fixed an issue when using Mail::queue to queue Mailables ([#27618](https://github.com/laravel/framework/pull/27618))
+- Fixed error in `Foundation\Exceptions\Handler` ([#27632](https://github.com/laravel/framework/pull/27632))
+
+
+## [v5.7.26 (2019-02-12)](https://github.com/laravel/framework/compare/v5.7.25...v5.7.26)
+
+### Added
+- Added `Illuminate\Pipeline\Pipeline::thenReturn()` ([#27429](https://github.com/laravel/framework/pull/27429)) 
+- Added `Illuminate\Cache\TaggedCache::getTags()` ([#27445](https://github.com/laravel/framework/pull/27445))
+- Added `Illuminate\Http\ResponseTrait::getCallback()` ([#27464](https://github.com/laravel/framework/pull/27464))
+- Added  license file to each component ([9e57e8b](https://github.com/laravel/framework/commit/9e57e8bea04638d5bafec62db1051fbc2ce39e3a))
+- Added `Model::withoutEvents()` method ([#27419](https://github.com/laravel/framework/pull/27419), [5c5d6b2](https://github.com/laravel/framework/commit/5c5d6b24f6156768575ae49aa84d7b1d004f23fe))
+
+### Reverted
+- Revert of "Fixed wrong class being used when eager loading nullable `MorphTo` with `withDefault()` ([#27411](https://github.com/laravel/framework/pull/27411))"([9bbf644](https://github.com/laravel/framework/commit/9bbf6443e2709d846367f04ebed9a41823ebcc34))
+
+### Changed
+- Improved error message in `Illuminate\Foundation\Testing\TestResponse::assertJsonValidationErrors()` ([#27495](https://github.com/laravel/framework/pull/27495), [98010da](https://github.com/laravel/framework/commit/98010da996de264c1487bbd1c145741169691b95))
+- `Illuminate\Support\Testing\Fakes\EventFake::dispatch()` will return response ([#27430](https://github.com/laravel/framework/pull/27430))
+
+
+## [v5.7.25 (2019-02-05)](https://github.com/laravel/framework/compare/v5.7.24...v5.7.25)
+
+### Added
+- Allowed specifying custom translation for date relative messages ([#27341](https://github.com/laravel/framework/pull/27341))
+- Add computed support to SQL Server schema grammar ([#27346](https://github.com/laravel/framework/pull/27346), [1c74d7f](https://github.com/laravel/framework/commit/1c74d7fe595df223279de55dffc7ae6fc8ac9ca6))
+- Allowed `ENV` to control paths of `cache files` for `services`, `packages` and `routes` ([#27389](https://github.com/laravel/framework/pull/27389))
+
+### Fixed
+- Fixed `BelongsToMany` pivot relationship child with loaded relations wakeup ([#27358](https://github.com/laravel/framework/pull/27358))
+- Fixed wrong class being used when eager loading nullable `MorphTo` with `withDefault()` ([#27411](https://github.com/laravel/framework/pull/27411))
+
+### Changed
+- Removed `php_network_getaddresses: getaddrinfo failed: Name or service not known` in `DetectsLostConnections` trait ([#27418](https://github.com/laravel/framework/pull/27418))
+
+
+## [v5.7.24 (2019-01-30)](https://github.com/laravel/framework/compare/v5.7.23...v5.7.24)
+
+### Fixed
+- Fixed `ResetPassword` notification ([#27351](https://github.com/laravel/framework/pull/27351), [b130771](https://github.com/laravel/framework/commit/b13077164bc6b4cb032b9eec7f5209402b5260eb))
+
+
+## [v5.7.23 (2019-01-29)](https://github.com/laravel/framework/compare/v5.7.22...v5.7.23)
+
+### Added
+- Added `AbstractPaginator::getOptions()` method ([#27273](https://github.com/laravel/framework/pull/27273))
+- Added `Communication link failure` to `DetectsLostConnections` trait ([#27307](https://github.com/laravel/framework/pull/27307))
+- Added `orWhere()` `proxy` for `scopes` to `EloquentBuilder` ([#27281](https://github.com/laravel/framework/pull/27281), [2e6fe85](https://github.com/laravel/framework/commit/2e6fe855c7d7d9d3cbf34e1fbea17c8059640c5c))
+- Allow the `app path` to be configured ([#27332](https://github.com/laravel/framework/pull/27332), [d73e672](https://github.com/laravel/framework/commit/d73e6729cefb26c2fbcb16e47daefc2ba86b9697))
+- Added config for using `WhatFailureGroupHandler` when `StackDriver` created for Logger ([#27308](https://github.com/laravel/framework/pull/27308) ,[6a92651](https://github.com/laravel/framework/commit/6a926519e8e3905013569e7b3fcdd598ec7cece3))
+
+### Fixed
+- Fixed `QueueableCollection` serialization of Eloquent Models when using `Binary IDs` ([#27271](https://github.com/laravel/framework/pull/27271))
+- Replaced `newModelQuery()` with `newQueryWithoutRelationships()` for `UPDATE`/`DELETE` queries ([#27277](https://github.com/laravel/framework/pull/27277))
+
+### Changed
+- Apply parameters to entire localization array ([#27254](https://github.com/laravel/framework/pull/27254))
+- Added line about expiring password reset in notification email ([#27324](https://github.com/laravel/framework/pull/27324), [80c5aec](https://github.com/laravel/framework/commit/80c5aecb443e7a55e868b66b9e0a93b7dfec08e8))
+- "Go Home" link will redirect to the `home` route on exception page ([#27343](https://github.com/laravel/framework/pull/27343))
+
+
+## [v5.7.22 (2019-01-22)](https://github.com/laravel/framework/compare/v5.7.21...v5.7.22)
+
+### Fixed
+- Fixed `TestResponse::assertJsonValidationErrors()` when there are no errors ([#27190](https://github.com/laravel/framework/pull/27190))
+
+### Changed
+- Allowed `TestResponse::assertJsonMissingValidationErrors()` to be called without an argument ([#27176](https://github.com/laravel/framework/pull/27176))
+- Updated vue preset's vue-stubs for laravel-mix 4 compatibility ([#27229](https://github.com/laravel/framework/pull/27229))
+- Updated preset to use `@babel/preset-react` ([#27235](https://github.com/laravel/framework/pull/27235))
+- Used `config` to resolve the database value during tests. ([#27240](https://github.com/laravel/framework/pull/27240))
+
+
+## [v5.7.21 (2019-01-15)](https://github.com/laravel/framework/compare/v5.7.20...v5.7.21)
+
+### Fixed
+- Fixed `Blueprint::removeColumn()` ([#27115](https://github.com/laravel/framework/pull/27115), [#27122](https://github.com/laravel/framework/pull/27122))
+- Fixed allowing of null broadcast connection driver ([#27135](https://github.com/laravel/framework/pull/27135))
+- Fixed `ModelMakeCommand::handle()` should always return `bool` value ([#27156](https://github.com/laravel/framework/pull/27156))
+- Fixed `TestResponse::assertSessionDoesntHaveErrors()` when there are no errors ([#27145](https://github.com/laravel/framework/pull/27145))
+- Fixed default message is localization twice in `403.blade.php` error page ([4a08120](https://github.com/laravel/framework/commit/4a081204d65a6e01959d795e71770079588bad21))
+
+### Changed
+- Replaced `get_called_class()` to `static::class` ([#27146](https://github.com/laravel/framework/pull/27146))
+- Re-throw `NoMatchingExpectationException` from `PendingCommand` ([#27158](https://github.com/laravel/framework/pull/27158))
+
+
+## [v5.7.20 (2019-01-08)](https://github.com/laravel/framework/compare/v5.7.19...v5.7.20)
 
 ### Added
 - Added `chunkById` support in relations ([#26919](https://github.com/laravel/framework/pull/26919))
+- Added `Collection::whereNotBetween` method ([#27028](https://github.com/laravel/framework/pull/27028))
 - Allowed predefined log channels to change formatter from config ([#26895](https://github.com/laravel/framework/pull/26895))
 - Allowed storage assertions (`FilesystemAdapter::assertExists` / `FilesystemAdapter::assertMissing`) to handle multiple files at once ([#26975](https://github.com/laravel/framework/pull/26975))
+- Added `Adaptive Server connection failed` to `DetectsLostConnections` trait ([#27055](https://github.com/laravel/framework/pull/27055))
+- Added `Route::originalParameters()` ([#27056](https://github.com/laravel/framework/pull/27056))
+- Added `QueueFake::pushedJobs()` ([#27089](https://github.com/laravel/framework/pull/27089), [695ffa1](https://github.com/laravel/framework/commit/695ffa1247a7a44a79ba85442ad9ea311413feae))
 
 ### Fixed
 - Prevents unnecessary queries when lazy loading empty relationships ([#26992](https://github.com/laravel/framework/pull/26992))
+- Fixed broken `Command::setHidden` method ([#27005](https://github.com/laravel/framework/pull/27005))
+- Fixed `Str::slug` method ([#27002](https://github.com/laravel/framework/pull/27002))
+- Ignore `--seed` option for `artisan migrate --pretend` ([#27015](https://github.com/laravel/framework/pull/27015)) 
+- Fixed `previousUrl` in the session if the call is `prefetch` ([#27017](https://github.com/laravel/framework/pull/27017))
+- Fixed nullable `MorphTo` touching ([#27031](https://github.com/laravel/framework/pull/27031))
+- Fixed `Collection::loadMissing()` with duplicate relation names ([#27040](https://github.com/laravel/framework/pull/27040))
+- Fixed some commands ([#27020](https://github.com/laravel/framework/pull/27020))
+- Ensured the command `context` is forwarded to calls ([#27012](https://github.com/laravel/framework/pull/27012), [#27065](https://github.com/laravel/framework/pull/27065))
+- Fixed `Collection::loadMorph()` issue relations loading issue ([#27081](https://github.com/laravel/framework/pull/27081))
 
 ### Changed
-- Changed default error pages ([83ca9a7](https://github.com/laravel/framework/commit/83ca9a7706a8091de9da17cb687a0852c9ef1960))
+- Removed `HasOneOrMany::update()` since `Builder::update()` already adds the `UPDATED_AT` timestamp. ([#27026](https://github.com/laravel/framework/pull/27026))
+- Changed `Name or service not known` to `php_network_getaddresses: getaddrinfo failed: Name or service not known` in `DetectsLostConnections` trait ([#27054](https://github.com/laravel/framework/pull/27054), [5459ac1](https://github.com/laravel/framework/commit/5459ac15b56cdee8e176827ddbb30357119ceabb))
+- Changed Eloquent `ApiResource merge()` methods to accept `JsonResource` object  ([#27068](https://github.com/laravel/framework/pull/27068))
+- Stop email re-verification with same link ([#27070](https://github.com/laravel/framework/pull/27070)) 
 
 
 ## [v5.7.19 (2018-12-18)](https://github.com/laravel/framework/compare/v5.7.18...v5.7.19)
