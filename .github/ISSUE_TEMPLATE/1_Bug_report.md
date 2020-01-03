@@ -1,11 +1,10 @@
 ---
-name: "🐛 Bug Report"
-about: Report a general framework issue
-
+name: "Bug report"
+about: 'Report a general framework issue. Please ensure your Laravel version is still supported: https://laravel.com/docs/releases#support-policy'
 ---
 
 - Laravel Version: #.#.#
-- PHP Version:
+- PHP Version: #.#.#
 - Database Driver & Version:
 
 ### Description:

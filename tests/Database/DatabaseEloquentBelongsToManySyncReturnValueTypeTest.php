@@ -2,10 +2,9 @@
 
 namespace Illuminate\Tests\Database;
 
-use PHPUnit\Framework\TestCase;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Eloquent\Model as Eloquent;
+use PHPUnit\Framework\TestCase;
 
 class DatabaseEloquentBelongsToManySyncReturnValueTypeTest extends TestCase
 {
@@ -93,7 +92,7 @@ class DatabaseEloquentBelongsToManySyncReturnValueTypeTest extends TestCase
     /**
      * Get a database connection instance.
      *
-     * @return Connection
+     * @return \Illuminate\Database\ConnectionInterface
      */
     protected function connection()
     {
@@ -103,7 +102,7 @@ class DatabaseEloquentBelongsToManySyncReturnValueTypeTest extends TestCase
     /**
      * Get a schema builder instance.
      *
-     * @return Schema\Builder
+     * @return \Illuminate\Database\Schema\Builder
      */
     protected function schema()
     {

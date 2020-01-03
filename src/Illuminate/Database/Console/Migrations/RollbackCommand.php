@@ -55,14 +55,14 @@ class RollbackCommand extends BaseCommand
             return;
         }
 
-        $this->migrator->setConnection($this->option('database'));
-
-        $this->migrator->setOutput($this->output)->rollback(
-            $this->getMigrationPaths(), [
-                'pretend' => $this->option('pretend'),
-                'step' => (int) $this->option('step'),
-            ]
-        );
+        $this->migrator->usingConnection($this->option('database'), function () {
+            $this->migrator->setOutput($this->output)->rollback(
+                $this->getMigrationPaths(), [
+                    'pretend' => $this->option('pretend'),
+                    'step' => (int) $this->option('step'),
+                ]
+            );
+        });
     }
 
     /**
@@ -77,7 +77,7 @@ class RollbackCommand extends BaseCommand
 
             ['force', null, InputOption::VALUE_NONE, 'Force the operation to run when in production'],
 
-            ['path', null, InputOption::VALUE_OPTIONAL, 'The path to the migrations files to be executed'],
+            ['path', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The path(s) to the migrations files to be executed'],
 
             ['realpath', null, InputOption::VALUE_NONE, 'Indicate any provided migration file paths are pre-resolved absolute paths'],
 
